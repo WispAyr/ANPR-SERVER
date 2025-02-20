@@ -1,0 +1,48 @@
+<%- contentFor('body') %>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Cameras</h1>
+        <a href="/admin/cameras/new" class="btn btn-primary">Add New Camera</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Car Park</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% cameras.forEach(function(camera) { %>
+                    <tr>
+                        <td><%= camera.name %></td>
+                        <td><%= camera.location %></td>
+                        <td><%= camera.car_park_name %></td>
+                        <td>
+                            <span class="badge <%= camera.status === 'active' ? 'bg-success' : 'bg-danger' %>">
+                                <%= camera.status %>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="/admin/cameras/<%= camera.id %>/edit" 
+                                   class="btn btn-sm btn-outline-secondary">Edit</a>
+                                <form action="/admin/cameras/<%= camera.id %>?_method=DELETE" 
+                                      method="POST" 
+                                      class="d-inline"
+                                      onsubmit="return confirm('Are you sure you want to delete this camera?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div> 

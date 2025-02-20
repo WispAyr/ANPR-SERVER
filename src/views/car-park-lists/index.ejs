@@ -1,0 +1,96 @@
+<%- contentFor('body') %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Vehicle Lists</h1>
+    <a href="/admin/car-park-lists/new" class="btn btn-primary">Add Vehicle to List</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-3">
+                <label for="licensePlate" class="form-label">License Plate</label>
+                <input type="text" class="form-control" id="licensePlate" name="licensePlate" 
+                    value="<%= query.licensePlate || '' %>">
+            </div>
+            <div class="col-md-3">
+                <label for="listType" class="form-label">List Type</label>
+                <select class="form-select" id="listType" name="listType">
+                    <option value="">All</option>
+                    <option value="whitelist" <%= query.listType === 'whitelist' ? 'selected' : '' %>>Whitelist</option>
+                    <option value="blacklist" <%= query.listType === 'blacklist' ? 'selected' : '' %>>Blacklist</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="carParkId" class="form-label">Car Park</label>
+                <select class="form-select" id="carParkId" name="carParkId">
+                    <option value="">All</option>
+                    <% carParks.forEach(function(carPark) { %>
+                        <option value="<%= carPark.id %>" 
+                            <%= query.carParkId == carPark.id ? 'selected' : '' %>>
+                            <%= carPark.name %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="/admin/car-park-lists" class="btn btn-secondary ms-2">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>License Plate</th>
+                <th>Car Park</th>
+                <th>List Type</th>
+                <th>Valid From</th>
+                <th>Valid Until</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% lists.forEach(function(list) { %>
+                <tr>
+                    <td><%= list.license_plate %></td>
+                    <td><%= list.car_park_name %></td>
+                    <td>
+                        <span class="badge bg-<%= list.list_type === 'whitelist' ? 'success' : 'danger' %>">
+                            <%= list.list_type.toUpperCase() %>
+                        </span>
+                    </td>
+                    <td><%= moment(list.valid_from).format('YYYY-MM-DD HH:mm') %></td>
+                    <td>
+                        <%= list.valid_until ? 
+                            moment(list.valid_until).format('YYYY-MM-DD HH:mm') : 
+                            'No expiry' %>
+                    </td>
+                    <td>
+                        <% const now = moment();
+                           const validFrom = moment(list.valid_from);
+                           const validUntil = list.valid_until ? moment(list.valid_until) : null;
+                           const isActive = validFrom <= now && (!validUntil || validUntil > now);
+                        %>
+                        <span class="badge bg-<%= isActive ? 'success' : 'secondary' %>">
+                            <%= isActive ? 'Active' : 'Inactive' %>
+                        </span>
+                    </td>
+                    <td>
+                        <a href="/admin/car-park-lists/<%= list.id %>/edit" 
+                           class="btn btn-sm btn-warning">Edit</a>
+                        <form action="/admin/car-park-lists/<%= list.id %>?_method=DELETE" 
+                              method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger" 
+                                    onclick="return confirm('Are you sure?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</div> 

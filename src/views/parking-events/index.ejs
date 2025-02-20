@@ -1,0 +1,96 @@
+<%- contentFor('body') %>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Parking Events</h1>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Car Park</label>
+                    <select name="carParkId" class="form-select">
+                        <option value="">All Car Parks</option>
+                        <% carParks.forEach(function(carPark) { %>
+                            <option value="<%= carPark.id %>" 
+                                    <%= query.carParkId == carPark.id ? 'selected' : '' %>>
+                                <%= carPark.name %>
+                            </option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="active" <%= query.status === 'active' ? 'selected' : '' %>>Active</option>
+                        <option value="completed" <%= query.status === 'completed' ? 'selected' : '' %>>Completed</option>
+                        <option value="violated" <%= query.status === 'violated' ? 'selected' : '' %>>Violated</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Start Date</label>
+                    <input type="date" name="startDate" class="form-control" 
+                           value="<%= query.startDate || '' %>">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">End Date</label>
+                    <input type="date" name="endDate" class="form-control" 
+                           value="<%= query.endDate || '' %>">
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Events Table -->
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>License Plate</th>
+                    <th>Car Park</th>
+                    <th>Entry Time</th>
+                    <th>Exit Time</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% events.forEach(function(event) { %>
+                    <tr>
+                        <td><%= event.license_plate %></td>
+                        <td><%= event.car_park_name %></td>
+                        <td><%= moment(event.entry_time).format('YYYY-MM-DD HH:mm:ss') %></td>
+                        <td>
+                            <% if (event.exit_time) { %>
+                                <%= moment(event.exit_time).format('YYYY-MM-DD HH:mm:ss') %>
+                            <% } else { %>
+                                -
+                            <% } %>
+                        </td>
+                        <td>
+                            <%= moment.duration(moment(event.exit_time || new Date()).diff(moment(event.entry_time))).humanize() %>
+                        </td>
+                        <td>
+                            <span class="badge <%= event.status === 'active' ? 'bg-success' : 
+                                                  event.status === 'violated' ? 'bg-danger' : 
+                                                  'bg-secondary' %>">
+                                <%= event.status %>
+                            </span>
+                        </td>
+                        <td>
+                            <a href="/admin/parking-events/<%= event.id %>" 
+                               class="btn btn-sm btn-outline-primary">View Details</a>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div> 

@@ -1,0 +1,94 @@
+<%- contentFor('body') %>
+
+<div class="container">
+    <h1><%= camera ? 'Edit Camera' : 'Add New Camera' %></h1>
+
+    <form action="<%= camera ? `/admin/cameras/${camera.id}?_method=PUT` : '/admin/cameras' %>" 
+          method="POST" 
+          class="needs-validation" 
+          novalidate>
+        
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="name" 
+                   name="name" 
+                   value="<%= camera ? camera.name : '' %>"
+                   required>
+            <div class="invalid-feedback">
+                Please provide a name for the camera.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="location" 
+                   name="location"
+                   value="<%= camera ? camera.location : '' %>"
+                   required>
+            <div class="invalid-feedback">
+                Please provide a location.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="carParkId" class="form-label">Car Park</label>
+            <select class="form-select" 
+                    id="carParkId" 
+                    name="carParkId" 
+                    required>
+                <option value="">Select Car Park</option>
+                <% carParks.forEach(function(carPark) { %>
+                    <option value="<%= carPark.id %>" 
+                            <%= (camera && camera.car_park_id === carPark.id) ? 'selected' : '' %>>
+                        <%= carPark.name %>
+                    </option>
+                <% }); %>
+            </select>
+            <div class="invalid-feedback">
+                Please select a car park.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" 
+                    id="status" 
+                    name="status" 
+                    required>
+                <option value="active" <%= (camera && camera.status === 'active') ? 'selected' : '' %>>
+                    Active
+                </option>
+                <option value="inactive" <%= (camera && camera.status === 'inactive') ? 'selected' : '' %>>
+                    Inactive
+                </option>
+            </select>
+            <div class="invalid-feedback">
+                Please select a status.
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="/admin/cameras" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<script>
+// Form validation
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+</script> 

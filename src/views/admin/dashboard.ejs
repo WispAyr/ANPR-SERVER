@@ -1,0 +1,84 @@
+<%- contentFor('body') %>
+
+<div class="container">
+    <h1 class="mb-4">Admin Dashboard</h1>
+
+    <% if (typeof error !== 'undefined') { %>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Car Parks</h5>
+                    <p class="card-text display-4"><%= stats.carParks %></p>
+                    <a href="/admin/car-parks" class="btn btn-primary">Manage Car Parks</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Cameras</h5>
+                    <p class="card-text display-4"><%= stats.cameras %></p>
+                    <a href="/admin/cameras" class="btn btn-primary">Manage Cameras</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Active Parking Events</h5>
+                    <p class="card-text display-4"><%= stats.activeEvents %></p>
+                    <a href="/admin/parking-events" class="btn btn-primary">View Events</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Quick Actions</h5>
+                    <div class="list-group">
+                        <a href="/admin/car-park-lists" class="list-group-item list-group-item-action">
+                            Manage Vehicle Lists
+                        </a>
+                        <a href="/admin/parking-rules" class="list-group-item list-group-item-action">
+                            Configure Parking Rules
+                        </a>
+                        <a href="/admin/enforcement-actions" class="list-group-item list-group-item-action">
+                            View Enforcement Actions
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">System Status</h5>
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Database</h6>
+                                <span class="badge bg-success">Connected</span>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Detection Service</h6>
+                                <span class="badge bg-success">Running</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

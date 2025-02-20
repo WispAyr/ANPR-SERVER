@@ -1,0 +1,144 @@
+<%- contentFor('body') %>
+
+<div class="container">
+    <div class="mb-4">
+        <a href="/admin/parking-events" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Events
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Event Details -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Event Details</h5>
+                    <span class="badge <%= event.status === 'active' ? 'bg-success' : 
+                                        event.status === 'violated' ? 'bg-danger' : 
+                                        'bg-secondary' %>">
+                        <%= event.status %>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>License Plate:</strong>
+                            <div><%= event.license_plate %></div>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Car Park:</strong>
+                            <div><%= event.car_park_name %></div>
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Duration:</strong>
+                            <div><%= duration %> minutes</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Entry Time:</strong>
+                            <div><%= moment(event.entry_time).format('YYYY-MM-DD HH:mm:ss') %></div>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Exit Time:</strong>
+                            <div>
+                                <% if (event.exit_time) { %>
+                                    <%= moment(event.exit_time).format('YYYY-MM-DD HH:mm:ss') %>
+                                <% } else { %>
+                                    Still parked
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Update Form -->
+                    <% if (event.status === 'active') { %>
+                        <form action="/admin/parking-events/<%= event.id %>/status?_method=PUT" 
+                              method="POST" 
+                              class="mt-3">
+                            <div class="input-group">
+                                <select name="status" class="form-select">
+                                    <option value="completed">Mark as Completed</option>
+                                    <option value="violated">Mark as Violated</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">Update Status</button>
+                            </div>
+                        </form>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Detection Images -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Detection Images</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Entry Detection</h6>
+                            <% if (event.entry_image) { %>
+                                <img src="<%= event.entry_image %>" class="img-fluid mb-2" alt="Entry">
+                                <div class="text-muted">Confidence: <%= event.entry_confidence %>%</div>
+                            <% } else { %>
+                                <div class="text-muted">No entry image available</div>
+                            <% } %>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Exit Detection</h6>
+                            <% if (event.exit_image) { %>
+                                <img src="<%= event.exit_image %>" class="img-fluid mb-2" alt="Exit">
+                                <div class="text-muted">Confidence: <%= event.exit_confidence %>%</div>
+                            <% } else { %>
+                                <div class="text-muted">No exit image available</div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enforcement Actions -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Enforcement Actions</h5>
+                </div>
+                <div class="card-body">
+                    <% if (actions && actions.length > 0) { %>
+                        <% actions.forEach(function(action) { %>
+                            <div class="border-bottom mb-3 pb-3">
+                                <div class="fw-bold"><%= action.action_type %></div>
+                                <div class="text-muted"><%= action.reason %></div>
+                                <small class="text-muted">
+                                    <%= moment(action.created_at).format('YYYY-MM-DD HH:mm:ss') %>
+                                </small>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p class="text-muted">No enforcement actions recorded</p>
+                    <% } %>
+
+                    <!-- Add Enforcement Action Form -->
+                    <form action="/admin/parking-events/<%= event.id %>/enforce" 
+                          method="POST" 
+                          class="mt-3">
+                        <div class="mb-3">
+                            <label class="form-label">Action Type</label>
+                            <select name="actionType" class="form-select" required>
+                                <option value="warning">Warning</option>
+                                <option value="fine">Fine</option>
+                                <option value="tow">Tow Request</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Reason</label>
+                            <textarea name="reason" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Action</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

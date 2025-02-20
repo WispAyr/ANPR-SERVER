@@ -1,0 +1,71 @@
+<%- contentFor('body') %>
+
+<div class="container">
+    <h1><%= carPark ? 'Edit Car Park' : 'Add New Car Park' %></h1>
+
+    <form action="<%= carPark ? `/admin/car-parks/${carPark.id}?_method=PUT` : '/admin/car-parks' %>" 
+          method="POST" 
+          class="needs-validation" 
+          novalidate>
+        
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="name" 
+                   name="name" 
+                   value="<%= carPark ? carPark.name : '' %>"
+                   required>
+            <div class="invalid-feedback">
+                Please provide a name for the car park.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="location" 
+                   name="location"
+                   value="<%= carPark ? carPark.location : '' %>"
+                   required>
+            <div class="invalid-feedback">
+                Please provide a location.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="maxCapacity" class="form-label">Maximum Capacity</label>
+            <input type="number" 
+                   class="form-control" 
+                   id="maxCapacity" 
+                   name="maxCapacity"
+                   value="<%= carPark ? carPark.max_capacity : '' %>"
+                   min="1"
+                   required>
+            <div class="invalid-feedback">
+                Please provide a valid maximum capacity.
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="/admin/car-parks" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<script>
+// Form validation
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+</script> 

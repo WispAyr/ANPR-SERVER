@@ -1,0 +1,62 @@
+<%- contentFor('body') %>
+
+<div class="container">
+    <h1><%= list ? 'Edit Vehicle Entry' : 'Add New Vehicle' %></h1>
+
+    <form action="<%= list ? `/admin/car-park-lists/${list.id}?_method=PUT` : '/admin/car-park-lists' %>" method="POST">
+        <div class="mb-3">
+            <label for="carParkId" class="form-label">Car Park</label>
+            <select class="form-select" id="carParkId" name="carParkId" required <%= list ? 'disabled' : '' %>>
+                <option value="">Select Car Park</option>
+                <% carParks.forEach(function(carPark) { %>
+                    <option value="<%= carPark.id %>" <%= (list && list.car_park_id === carPark.id) ? 'selected' : '' %>>
+                        <%= carPark.name %>
+                    </option>
+                <% }); %>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="licensePlate" class="form-label">License Plate</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="licensePlate" 
+                   name="licensePlate" 
+                   value="<%= list ? list.license_plate : '' %>"
+                   required 
+                   <%= list ? 'readonly' : '' %>>
+        </div>
+
+        <div class="mb-3">
+            <label for="listType" class="form-label">List Type</label>
+            <select class="form-select" id="listType" name="listType" required <%= list ? 'disabled' : '' %>>
+                <option value="">Select Type</option>
+                <option value="whitelist" <%= (list && list.list_type === 'whitelist') ? 'selected' : '' %>>Whitelist</option>
+                <option value="blacklist" <%= (list && list.list_type === 'blacklist') ? 'selected' : '' %>>Blacklist</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="validFrom" class="form-label">Valid From</label>
+            <input type="datetime-local" 
+                   class="form-control" 
+                   id="validFrom" 
+                   name="validFrom"
+                   value="<%= list ? moment(list.valid_from).format('YYYY-MM-DDTHH:mm') : '' %>"
+                   required>
+        </div>
+
+        <div class="mb-3">
+            <label for="validUntil" class="form-label">Valid Until</label>
+            <input type="datetime-local" 
+                   class="form-control" 
+                   id="validUntil" 
+                   name="validUntil"
+                   value="<%= list ? moment(list.valid_until).format('YYYY-MM-DDTHH:mm') : '' %>">
+            <small class="text-muted">Leave empty for indefinite validity</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="/admin/car-park-lists" class="btn btn-secondary">Cancel</a>
+    </form>
+</div> 
